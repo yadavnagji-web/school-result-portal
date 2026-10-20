@@ -974,6 +974,9 @@
           </p>
 
           <form onsubmit="event.preventDefault(); doLogin();">
+            <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; padding: 10px; margin-bottom: 14px; font-size: 12px; color: #1e40af; text-align: center;">
+              <strong>💡 सूचना:</strong> यदि आपने अभी तक नया स्कूल रजिस्टर नहीं किया है, तो नीचे <a onclick="toggleAuthForm('register')" style="text-decoration: underline; font-weight: bold; cursor: pointer;">"यहाँ नया रजिस्ट्रेशन करें"</a> पर क्लिक करके अपना स्कूल बनाएं।<br>(परीक्षण हेतु डिफ़ॉल्ट: ईमेल <code>school@gmail.com</code> | पासवर्ड <code>admin</code>)
+            </div>
             <div style="margin-bottom: 14px;">
               <label class="field-label"><i class="fa-solid fa-envelope"></i> पंजीकृत ईमेल (Registered Email)</label>
               <input type="email" id="login-email" class="search-input" placeholder="teacher@gmail.com" required>
@@ -1403,6 +1406,59 @@
         return `${numericFormatted} (${dWord} ${mWord} ${yWord})`;
       }
     }
+
+    const DB_KEY_V4 = 'RAJ_SCHOOL_RESULTS_PORTAL_DB_V4';
+    const DB_SESSION_V4 = 'RAJ_SCHOOL_RESULTS_PORTAL_SESSION_V4';
+    let activeAdminClass = '3';
+
+    const INITIAL_DB = {
+      "school-demo": {
+        id: "school-demo",
+        name: "राजकीय उच्च प्राथमिक विद्यालय, राजस्थान",
+        city: "जयपुर",
+        udise: "08120501234",
+        session: "2024–2025",
+        email: "school@gmail.com",
+        password: "admin",
+        sigMode: "barcode",
+        logoUrl: "",
+        classTeacherName: "श्री कांतिलाल रोत",
+        principalName: "श्री मणिलाल पारगी",
+        classes: {
+          "3": [
+            {
+              rollNo: "101",
+              scholarNo: "1001",
+              name: "DEVENDRA ROAT",
+              fatherName: "AMRIT LAL",
+              motherName: "Suaa",
+              dob: "03/05/2017",
+              classSec: "3(A)",
+              stream: "",
+              subjects: [
+                { name: "HINDI", t1: 8, t2: 8, t3: 8, hy: 45, yearly: 70, maxTotal: 200 },
+                { name: "ENGLISH", t1: 4, t2: 4, t3: 4, hy: 22, yearly: 35, maxTotal: 100 },
+                { name: "MATHEMATICS", t1: 8, t2: 8, t3: 8, hy: 45, yearly: 70, maxTotal: 200 },
+                { name: "EVS / पर्यावरण अध्ययन", t1: 8, t2: 8, t3: 8, hy: 45, yearly: 70, maxTotal: 200 }
+              ],
+              extra: [
+                { name: "कला शिक्षा (Art Edu)", marks: "85/100", grade: "A" },
+                { name: "स्वास्थ्य एवं शारीरिक शिक्षा", marks: "90/100", grade: "A" }
+              ],
+              totalMax: 700,
+              totalObt: 585,
+              percent: 83.57,
+              grade: "B",
+              result: "PASSED",
+              position: "First Div (I)",
+              meetings: { total: 412, student: 360, percent: "87.38" },
+              resultDate: "16-05-2025"
+            }
+          ],
+          "4": [], "6": [], "7": [], "8": [], "9": [], "11": []
+        }
+      }
+    };
 
     function getSchoolsDB() {
       const data = localStorage.getItem(DB_KEY_V4);
