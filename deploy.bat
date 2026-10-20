@@ -9,11 +9,18 @@ echo ======================================================================
 echo.
 echo Is portal ki sabhi files commit ki ja chuki hain.
 echo.
-echo GitHub par repo push karne ke liye:
-echo 1. Browser me https://github.com/new par jakar new repo banayein.
-echo 2. Us repo ka URL copy karein (Jaise: https://github.com/username/portal.git)
+echo Kya aapne GitHub par empty repo bana li hai?
+set /p OPEN_BROWSER="Nayi repo banane ke liye GitHub kholna hai? (Y/N, default Y): "
+if /i "%OPEN_BROWSER%"=="" set OPEN_BROWSER=Y
+if /i "%OPEN_BROWSER%"=="Y" (
+    echo Browser me GitHub khul raha hai...
+    start https://github.com/new
+    echo Wahan sirf Repo ka naam likh kar 'Create repository' par click karein.
+    echo.
+)
+
 echo.
-set /p REPO_URL="Apne GitHub Repo ka URL yahan paste karein aur Enter dabayein: "
+set /p REPO_URL="Apne GitHub Repo ka URL (e.g. https://github.com/user/repo.git) paste karein: "
 
 if "%REPO_URL%"=="" (
     echo.
