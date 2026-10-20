@@ -1,0 +1,18 @@
+{
+  "name": "rajasthan-school-result-portal",
+  "version": "1.0.0",
+  "description": "Multi-Class School Examination Result & Digital Marksheet Portal (Department of Education, Rajasthan Pattern)",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "school-result",
+    "rajasthan-education",
+    "report-card",
+    "marksheet-generator",
+    "shala-darpan"
+  ],
+  "author": "Creative Teachers",
+  "license": "MIT"
+}
