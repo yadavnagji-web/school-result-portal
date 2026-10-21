@@ -158,25 +158,7 @@
       font-weight: 600;
     }
 
-    /* School Selector Dropdown on Search Page */
-    .school-picker-box {
-      margin-top: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      font-size: 13px;
-      color: #475569;
-    }
-    .school-picker-select {
-      padding: 6px 12px;
-      border-radius: 6px;
-      border: 1.5px solid #cbd5e1;
-      font-weight: 700;
-      color: #1e3a8a;
-      outline: none;
-      background: white;
-    }
+
 
     /* Enhanced Search Box with Class, Roll No and DOB */
     .search-card {
@@ -675,18 +657,6 @@
          ========================================================= -->
     <section id="search-view" class="view-section active">
       
-      <!-- Welcome prompt if no school is registered -->
-      <div id="no-school-prompt" class="no-school-box" style="display: none;">
-        <i class="fa-solid fa-school-circle-exclamation" style="font-size: 48px; color: #3b82f6; margin-bottom: 12px; display: block;"></i>
-        <h2 style="font-size: 20px; font-weight: 800; color: #1e3a8a; margin-bottom: 8px;">विद्यालय परीक्षा परिणाम पोर्टल में आपका स्वागत है</h2>
-        <p style="font-size: 14px; color: #64748b; margin-bottom: 20px;">
-          रिजल्ट सॉफ्टवेयर का उपयोग करने के लिए कृपया अपने विद्यालय का निःशुल्क खाता रजिस्टर करें।
-        </p>
-        <button class="btn btn-primary" style="padding: 12px 24px; font-size: 14px;" onclick="switchView('auth-view'); toggleAuthForm('register');">
-          <i class="fa-solid fa-school"></i> नया विद्यालय खाता रजिस्टर करें
-        </button>
-      </div>
-
       <div id="active-school-content">
         <!-- School Info Banner -->
         <div class="school-banner">
@@ -701,15 +671,10 @@
             </svg>
           </div>
           <div>
-            <h1 class="school-title" id="disp-school-name">विद्यालय नाम</h1>
+            <h1 class="school-title" id="disp-school-name">राजस्थान शाला परीक्षा परिणाम एवं डिजिटल अंकतालिका पोर्टल</h1>
             <div class="school-meta">
-              <span id="disp-udise"><i class="fa-solid fa-id-card"></i> U-DISE Code: ---</span>
-              <span id="disp-session"><i class="fa-solid fa-calendar-days"></i> Session: 2024–2025</span>
-            </div>
-            <!-- School Selector dropdown if multiple schools exist -->
-            <div class="school-picker-box" id="school-picker-row" style="display:none;">
-              <span><i class="fa-solid fa-building-columns"></i> विद्यालय चुनें:</span>
-              <select id="school-picker-select" class="school-picker-select" onchange="onSelectSchoolFromPicker(this.value)"></select>
+              <span id="disp-udise"><i class="fa-solid fa-award"></i> शाला दर्पण एवं शिक्षा विभाग पैटर्न</span>
+              <span id="disp-session"><i class="fa-solid fa-calendar-days"></i> सत्र: 2024–2025</span>
             </div>
           </div>
         </div>
@@ -1407,9 +1372,29 @@
       }
     }
 
+    function calculateGrade(obt, max) {
+      if (typeof obt === 'string') {
+        const u = obt.toUpperCase().trim();
+        if (['AB', 'ML', 'NA', 'NSO', 'SUPP', 'GRACE'].includes(u)) return u;
+      }
+      const numObt = parseFloat(obt);
+      const numMax = parseFloat(max);
+      if (isNaN(numObt) || isNaN(numMax) || numMax <= 0) return '-';
+      const pct = (numObt / numMax) * 100;
+      if (pct >= 86) return 'A';
+      if (pct >= 71) return 'B';
+      if (pct >= 51) return 'C';
+      if (pct >= 31) return 'D';
+      return 'E';
+    }
+
     const DB_KEY_V4 = 'RAJ_SCHOOL_RESULTS_PORTAL_DB_V4';
     const DB_SESSION_V4 = 'RAJ_SCHOOL_RESULTS_PORTAL_SESSION_V4';
     let activeAdminClass = '3';
+    let marksheetForceLang = null;
+    let currentRenderedStudent = null;
+    let currentRenderedSchool = null;
+    let currentRenderedClass = null;
 
     const INITIAL_DB = {
       "school-demo": {
@@ -1455,7 +1440,132 @@
               resultDate: "16-05-2025"
             }
           ],
-          "4": [], "6": [], "7": [], "8": [], "9": [], "11": []
+          "4": [
+            {
+              rollNo: "401",
+              scholarNo: "1004",
+              name: "PRIYA SHARMA",
+              fatherName: "RAMESH SHARMA",
+              motherName: "SUNITA",
+              dob: "15/07/2016",
+              classSec: "4(A)",
+              stream: "",
+              subjects: [
+                { name: "HINDI", t1: 9, t2: 9, t3: 9, hy: 48, yearly: 75, maxTotal: 200 },
+                { name: "ENGLISH", t1: 4, t2: 4, t3: 5, hy: 24, yearly: 38, maxTotal: 100 },
+                { name: "MATHEMATICS", t1: 9, t2: 9, t3: 9, hy: 46, yearly: 72, maxTotal: 200 },
+                { name: "EVS / पर्यावरण अध्ययन", t1: 9, t2: 9, t3: 9, hy: 47, yearly: 74, maxTotal: 200 }
+              ],
+              extra: [
+                { name: "कला शिक्षा (Art Edu)", marks: "90/100", grade: "A" },
+                { name: "स्वास्थ्य एवं शारीरिक शिक्षा", marks: "95/100", grade: "A" }
+              ],
+              totalMax: 700,
+              totalObt: 618,
+              percent: 88.29,
+              grade: "A",
+              result: "PASSED",
+              position: "First Div (I)",
+              meetings: { total: 412, student: 380, percent: "92.23" },
+              resultDate: "16-05-2025"
+            }
+          ],
+          "6": [
+            {
+              rollNo: "601",
+              scholarNo: "1006",
+              name: "RAHUL MEENA",
+              fatherName: "DINESH MEENA",
+              motherName: "REKHA",
+              dob: "10/08/2014",
+              classSec: "6(A)",
+              stream: "",
+              subjects: [
+                { name: "HINDI", t1: 8, t2: 8, t3: 8, hy: 45, yearly: 70, maxTotal: 200 },
+                { name: "ENGLISH", t1: 8, t2: 8, t3: 8, hy: 42, yearly: 68, maxTotal: 200 },
+                { name: "MATHEMATICS", t1: 9, t2: 9, t3: 9, hy: 48, yearly: 74, maxTotal: 200 },
+                { name: "SCIENCE", t1: 8, t2: 8, t3: 8, hy: 44, yearly: 71, maxTotal: 200 },
+                { name: "SOCIAL SCIENCE", t1: 8, t2: 8, t3: 8, hy: 43, yearly: 69, maxTotal: 200 },
+                { name: "SANSKRIT", t1: 8, t2: 8, t3: 8, hy: 45, yearly: 72, maxTotal: 200 }
+              ],
+              extra: [
+                { name: "स्वास्थ्य एवं शारीरिक शिक्षा", marks: "90/100", grade: "A" },
+                { name: "कला शिक्षा", marks: "88/100", grade: "A" }
+              ],
+              totalMax: 1200,
+              totalObt: 994,
+              percent: 82.83,
+              grade: "B",
+              result: "PASSED",
+              position: "First Div (I)",
+              meetings: { total: 412, student: 375, percent: "91.02" },
+              resultDate: "16-05-2025"
+            }
+          ],
+          "7": [], "8": [],
+          "9": [
+            {
+              rollNo: "901",
+              scholarNo: "1009",
+              name: "ANITA PATEL",
+              fatherName: "MOHAN PATEL",
+              motherName: "GEETA",
+              dob: "05/04/2011",
+              classSec: "9(A)",
+              stream: "",
+              subjects: [
+                { name: "HINDI", t1: 8, t2: 8, t3: 8, hy: 45, yearly: 70, maxTotal: 200 },
+                { name: "ENGLISH", t1: 8, t2: 8, t3: 8, hy: 44, yearly: 68, maxTotal: 200 },
+                { name: "MATHEMATICS", t1: 9, t2: 9, t3: 9, hy: 47, yearly: 73, maxTotal: 200 },
+                { name: "SCIENCE", t1: 8, t2: 8, t3: 8, hy: 46, yearly: 71, maxTotal: 200 },
+                { name: "SOCIAL SCIENCE", t1: 8, t2: 8, t3: 8, hy: 43, yearly: 69, maxTotal: 200 },
+                { name: "SANSKRIT", t1: 8, t2: 8, t3: 8, hy: 45, yearly: 70, maxTotal: 200 }
+              ],
+              extra: [
+                { name: "स्वास्थ्य एवं शारीरिक शिक्षा", marks: "85/100", grade: "A" },
+                { name: "सूचना प्रौद्योगिकी (IT)", marks: "90/100", grade: "A" }
+              ],
+              totalMax: 1200,
+              totalObt: 988,
+              percent: 82.33,
+              grade: "B",
+              result: "PASSED",
+              position: "First Div (I)",
+              meetings: { total: 412, student: 365, percent: "88.59" },
+              resultDate: "16-05-2025"
+            }
+          ],
+          "11": [
+            {
+              rollNo: "1101",
+              scholarNo: "1011",
+              name: "SURESH VERMA",
+              fatherName: "JAGDISH VERMA",
+              motherName: "KAMLADEVI",
+              dob: "12/02/2009",
+              classSec: "11(A)",
+              stream: "Science",
+              subjects: [
+                { name: "Com. Hindi", t1: 8, t2: 8, t3: 8, hy: 45, yearly: 70, maxTotal: 200 },
+                { name: "Com. English", t1: 8, t2: 8, t3: 8, hy: 42, yearly: 68, maxTotal: 200 },
+                { name: "Physics", t1: 8, t2: 8, t3: 8, hy: 45, yearly: 72, maxTotal: 200 },
+                { name: "Chemistry", t1: 8, t2: 8, t3: 8, hy: 44, yearly: 70, maxTotal: 200 },
+                { name: "Mathematics", t1: 9, t2: 9, t3: 9, hy: 48, yearly: 75, maxTotal: 200 }
+              ],
+              extra: [
+                { name: "General Studies / जीवन कौशल", marks: "88/100", grade: "A" },
+                { name: "Physical Education", marks: "92/100", grade: "A" }
+              ],
+              totalMax: 1000,
+              totalObt: 844,
+              percent: 84.40,
+              grade: "A",
+              result: "PASSED",
+              position: "First Div (I)",
+              meetings: { total: 412, student: 370, percent: "89.80" },
+              resultDate: "16-05-2025"
+            }
+          ]
         }
       }
     };
@@ -1483,8 +1593,6 @@
       else localStorage.removeItem(DB_SESSION_V4);
     }
 
-    let activeSelectedSchoolId = null;
-
     function getActiveSchool() {
       const db = getSchoolsDB();
       const session = getCurrentSession();
@@ -1494,16 +1602,22 @@
       const schoolParam = urlParams.get('school');
       if (schoolParam && db[schoolParam]) return db[schoolParam];
 
-      if (activeSelectedSchoolId && db[activeSelectedSchoolId]) return db[activeSelectedSchoolId];
-
       const allSchools = Object.values(db);
       if (allSchools.length > 0) return allSchools[0];
       return null;
     }
 
-    function onSelectSchoolFromPicker(schoolId) {
-      activeSelectedSchoolId = schoolId;
-      renderSchoolBannerInfo();
+    function getDefaultEmblemSvg() {
+      return `
+        <svg width="60" height="60" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="46" fill="#fef3c7" stroke="#b45309" stroke-width="3"/>
+          <circle cx="50" cy="50" r="41" fill="#fff" stroke="#1e3a8a" stroke-width="1.5"/>
+          <path d="M25,65 Q50,85 75,65 Q50,75 25,65 Z" fill="#f43f5e"/>
+          <path d="M35,60 Q50,78 65,60 Q50,70 35,60 Z" fill="#fb7185"/>
+          <path d="M32,48 L50,55 L68,48 L50,42 Z" fill="#d97706"/>
+          <circle cx="50" cy="36" r="10" fill="#f59e0b"/>
+        </svg>
+      `;
     }
 
     // -------------------------------------------------------------
@@ -1529,57 +1643,38 @@
     }
 
     function renderSchoolBannerInfo() {
-      const school = getActiveSchool();
-      const noSchoolPrompt = document.getElementById('no-school-prompt');
-      const activeSchoolContent = document.getElementById('active-school-content');
-
-      if (!school) {
-        noSchoolPrompt.style.display = 'block';
-        activeSchoolContent.style.display = 'none';
-        return;
-      }
-
-      noSchoolPrompt.style.display = 'none';
-      activeSchoolContent.style.display = 'block';
-
-      document.getElementById('disp-school-name').textContent = school.name;
-      document.getElementById('disp-udise').innerHTML = `<i class="fa-solid fa-id-card"></i> U-DISE Code: ${school.udise}`;
-      document.getElementById('disp-session').innerHTML = `<i class="fa-solid fa-calendar-days"></i> Session: ${school.session || '2024–2025'}`;
-
-      const logoWrap = document.getElementById('disp-school-logo-wrap');
-      if (school.logoUrl) {
-        logoWrap.innerHTML = `<img src="${school.logoUrl}" class="banner-logo" alt="Logo">`;
-      } else {
-        logoWrap.innerHTML = `
-          <svg width="60" height="60" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="46" fill="#fef3c7" stroke="#b45309" stroke-width="3"/>
-            <circle cx="50" cy="50" r="41" fill="#fff" stroke="#1e3a8a" stroke-width="1.5"/>
-            <path d="M25,65 Q50,85 75,65 Q50,75 25,65 Z" fill="#f43f5e"/>
-            <path d="M35,60 Q50,78 65,60 Q50,70 35,60 Z" fill="#fb7185"/>
-            <path d="M32,48 L50,55 L68,48 L50,42 Z" fill="#d97706"/>
-            <circle cx="50" cy="36" r="10" fill="#f59e0b"/>
-          </svg>
-        `;
-      }
-
-      // Check if multiple schools exist
+      const urlParams = new URLSearchParams(window.location.search);
+      const schoolParam = urlParams.get('school');
       const db = getSchoolsDB();
-      const schoolList = Object.values(db);
-      const pickerRow = document.getElementById('school-picker-row');
-      const pickerSelect = document.getElementById('school-picker-select');
+      const session = getCurrentSession();
 
-      if (schoolList.length > 1) {
-        pickerRow.style.display = 'flex';
-        pickerSelect.innerHTML = schoolList.map(s => `
-          <option value="${s.id}" ${s.id === school.id ? 'selected' : ''}>${s.name} (${s.city})</option>
-        `).join('');
+      const specificSchool = (schoolParam && db[schoolParam]) ? db[schoolParam] : 
+                             (session && db[session.schoolId] ? db[session.schoolId] : null);
+
+      const nameEl = document.getElementById('disp-school-name');
+      const udiseEl = document.getElementById('disp-udise');
+      const sessionEl = document.getElementById('disp-session');
+      const logoWrap = document.getElementById('disp-school-logo-wrap');
+
+      if (specificSchool) {
+        nameEl.textContent = specificSchool.name;
+        udiseEl.innerHTML = `<i class="fa-solid fa-id-card"></i> U-DISE Code: ${specificSchool.udise || '---'}`;
+        sessionEl.innerHTML = `<i class="fa-solid fa-calendar-days"></i> Session: ${specificSchool.session || '2024–2025'}`;
+        if (specificSchool.logoUrl) {
+          logoWrap.innerHTML = `<img src="${specificSchool.logoUrl}" class="banner-logo" alt="Logo">`;
+        } else {
+          logoWrap.innerHTML = getDefaultEmblemSvg();
+        }
       } else {
-        pickerRow.style.display = 'none';
+        nameEl.textContent = 'राजस्थान शाला परीक्षा परिणाम एवं डिजिटल अंकतालिका पोर्टल';
+        udiseEl.innerHTML = `<i class="fa-solid fa-award"></i> शाला दर्पण एवं शिक्षा विभाग पैटर्न`;
+        sessionEl.innerHTML = `<i class="fa-solid fa-calendar-days"></i> सत्र: 2024–2025`;
+        logoWrap.innerHTML = getDefaultEmblemSvg();
       }
     }
 
     // -------------------------------------------------------------
-    // 1. SEARCH WITH CLASS, ROLL NO & DOB
+    // 1. SEARCH WITH CLASS, ROLL NO & DOB (NO SCHOOL NAME SELECTION NEEDED)
     // -------------------------------------------------------------
     function performSearch() {
       const selClass = document.getElementById('search-class-select').value;
@@ -1593,27 +1688,51 @@
       }
 
       const inputDateParts = parseDateParts(rawDob);
-      const school = getActiveSchool();
-      if (!school) {
-        alert('कृपया पहले विद्यालय रजिस्टर करें!');
+      const db = getSchoolsDB();
+      const allSchools = Object.values(db);
+
+      if (allSchools.length === 0) {
+        errBox.style.display = 'block';
+        errBox.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> पोर्टल पर अभी कोई परीक्षा परिणाम उपलब्ध नहीं है।`;
         return;
       }
 
-      const students = (school.classes && school.classes[selClass]) ? school.classes[selClass] : [];
+      let matchedStudent = null;
+      let matchedSchool = null;
 
-      const student = students.find(s => {
-        const matchRoll = String(s.rollNo).trim().toLowerCase() === rollInput.toLowerCase();
-        if (!matchRoll) return false;
-        if (!rawDob) return true; // if DOB left blank, match roll
+      // Prioritize URL school or logged-in school if specified, otherwise search all schools
+      const urlParams = new URLSearchParams(window.location.search);
+      const schoolParam = urlParams.get('school');
+      const session = getCurrentSession();
+      const preferredId = schoolParam || (session ? session.schoolId : null);
 
-        const sParts = parseDateParts(s.dob);
-        if (sParts && inputDateParts) {
-          return sParts.d === inputDateParts.d && sParts.m === inputDateParts.m && sParts.y === inputDateParts.y;
+      let searchOrder = allSchools;
+      if (preferredId && db[preferredId]) {
+        searchOrder = [db[preferredId], ...allSchools.filter(s => s.id !== preferredId)];
+      }
+
+      for (const school of searchOrder) {
+        const students = (school.classes && school.classes[selClass]) ? school.classes[selClass] : [];
+        const found = students.find(s => {
+          const matchRoll = String(s.rollNo).trim().toLowerCase() === rollInput.toLowerCase();
+          if (!matchRoll) return false;
+          if (!rawDob) return true; // if DOB left blank, match roll
+
+          const sParts = parseDateParts(s.dob);
+          if (sParts && inputDateParts) {
+            return sParts.d === inputDateParts.d && sParts.m === inputDateParts.m && sParts.y === inputDateParts.y;
+          }
+          return String(s.dob).replace(/[\/.]/g, '-') === rawDob.replace(/[\/.]/g, '-');
+        });
+
+        if (found) {
+          matchedStudent = found;
+          matchedSchool = school;
+          break;
         }
-        return String(s.dob).replace(/[\/.]/g, '-') === rawDob.replace(/[\/.]/g, '-');
-      });
+      }
 
-      if (!student) {
+      if (!matchedStudent) {
         errBox.style.display = 'block';
         errBox.innerHTML = `
           <i class="fa-solid fa-triangle-exclamation"></i> 
@@ -1625,10 +1744,16 @@
       }
 
       errBox.style.display = 'none';
-      currentRenderedStudent = student;
-      currentRenderedSchool = school;
+      currentRenderedStudent = matchedStudent;
+      currentRenderedSchool = matchedSchool;
       currentRenderedClass = selClass;
-      renderReportCard(student, school, selClass);
+      renderReportCard(matchedStudent, matchedSchool, selClass);
+    }
+
+    function closeMarksheet() {
+      document.getElementById('marksheet-container').style.display = 'none';
+      document.getElementById('search-card-box').style.display = 'block';
+      document.getElementById('search-card-box').scrollIntoView({ behavior: 'smooth' });
     }
 
     // Toggle Language
